@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Memory Game</title>
+	<link href="../_shared/demo.css" rel="stylesheet" type="text/css">
+	<script src="http://code.createjs.com/easeljs-0.7.0.min.js"></script>
+	<script src="C:\Users\FZ\Documents\GitHub\JSGame\easelJS.js"></script>
+	<script>
+
+	
+		var stage;
+		var messageField;
+		//register key functions
+		//document.onkeydown = handleKeyDown;
+
+		var score = 0;
+		var infoField;
+		var start = false;
+		var image;
+		var circle;
+		var map = [[], [], [], [], [], []];
+		var has = [[], [], [], [], [], []];
+		var intMap = [[], [], [], [], [], []];
+
+		var pre;
+		var cn = 0;
+		function init() {
+
+			stage = new createjs.Stage("demoCanvas");
+
+			//cutting board
+			var rect1 = new createjs.Shape();
+			rect1.graphics.beginStroke("#000");
+			rect1.graphics.setStrokeStyle(1);
+			rect1.snapToPixel = true;
+			rect1.graphics.drawRect(0, 0, 100, 600);
+			rect1.x = 100;
+			rect1.y = 0;
+			stage.addChild(rect1);
+
+
+			var rect2 = rect1.clone(true);
+			rect2.x = 300;
+			rect2.y = 0;
+			stage.addChild(rect2);
+
+			var rect3 = rect1.clone(true);
+			rect3.x = 500;
+			rect3.y = 0;
+			stage.addChild(rect3);
+
+
+			var rect5 = rect1.clone(true);
+			rect5.graphics.drawRect(0, 0, 600, 100);
+			rect5.x = 0;
+			rect5.y = 100;
+			stage.addChild(rect5);
+
+			var rect6 = rect5.clone(true);
+			rect6.x = 0;
+			rect6.y = 300;
+			stage.addChild(rect6);
+
+			var rect7 = rect5.clone(true);
+			rect7.x = 0;
+			rect7.y = 500;
+			stage.addChild(rect7);
+			stage.update();
+
+			var color = ["black", "red", "green", "orange", "blue", "purple"];
+			
+			for(var i = 0; i <= 5; i++)
+				for(var j = 0; j <= 5; j++) {
+					var rm = Math.floor(Math.random()*6);
+					var pic = new createjs.Shape();
+					pic.graphics.beginFill(color[rm]).drawCircle(0, 0, 50);
+					pic.x = 100 * i + 50;
+					pic.y = 100 * j + 50;
+					map[i][j] = pic;
+					intMap[i][j] = rm;
+					
+					has[i][j] = false;
+					stage.update();
+				}
+			
+
+
+			stage.addEventListener("stagemousedown", function(evt) {
+    			var p = Math.floor(evt.stageX / 100);
+    			var q = Math.floor(evt.stageY / 100);
+    			if(p < 0 || p >= 6 || q < 0 || q >= 6)
+    				return;
+
+    			if(cn == 0) {
+    				stage.addChild(map[p][q]);
+    				pre = intMap[p][q];
+    				cn = 1;
+    				has[p][q] = true;
+    				stage.update();
+    			}
+    			else{
+    				if(has[p][q] == false) {
+    					if(intMap[p][q] == pre) {
+    						stage.addChild(map[p][q]);
+    						stage.update();
+    						has[p][q] = true;
+    						cn = cn + 1;
+
+    					}
+    					else {
+    						stage.removeAllChildren();
+
+    						setFalse(has);
+
+    						stage.addChild(map[p][q]);
+    						pre = intMap[p][q];
+    						has[p][q] = true;
+    						stage.addChild(rect1);
+    						stage.addChild(rect2);
+    						stage.addChild(rect3);
+    						stage.addChild(rect5);
+    						stage.addChild(rect6);
+    						stage.addChild(rect7);
+    						cn = 1;
+    						stage.update();
+
+    					}
+    				}
+
+    			}
+    			if(cn == 6) {
+    				alert("You have succeed!");
+    				init();
+    			}
+			});
+			
+		}
+		
+ 		function setFalse(has){
+ 			for(var i = 0; i <= 5; i++)
+ 				for(var j = 0; j <= 5; j++)
+ 					has[i][j] = false;
+
+ 		}
+	</script>
+
+
+</head>
+
+<style>
+body{
+	font-family: sans-serif;
+	width: 600px;
+	margin:0 auto;
+	padding: 10px;
+}
+
+canvas{
+	border: 5px solid #000000;
+}
+input[type=button]{
+	font-size: 24px;
+}
+p{
+
+	font-size: 24px;
+}
+
+
+</style>
+
+<body onLoad="init();">
+	<br>
+	<canvas id="demoCanvas" width="600" height="600">
+		alternate content
+	</canvas>
+	<br>
+
+	<p id="demo"> Cilck on the grid to find the same color for 6 times.</p>
+	<p id="demo1"></p>
+</body>
+</html>
